@@ -1,11 +1,15 @@
 package aplicacion.servicios;
 
+import java.awt.HeadlessException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
 import javax.swing.JOptionPane;
 
+import aplicacion.controlador.Principal;
 import aplicacion.entidades.Repostaje;
 
 /**
@@ -20,6 +24,7 @@ public class ImplRepostaje implements InterfazRepostaje{
 	private double precioLitro95=1.65;
 	private double precioLitro98=1.85;
 	private double precioLitroDiesel=1.70;
+	private InterfazGestionFicheros intF = new ImplGestionFicheros();
 	
 	@Override
 	public void repostajeNormal(List<Repostaje> baseDatosNormal) {
@@ -125,19 +130,24 @@ public class ImplRepostaje implements InterfazRepostaje{
 
 		if(esRepostajeConFactura()) {
 			if(baseDatosFactura.size()>0) {
+				
 				for(int i=0;i<baseDatosFactura.size();i++) 
-					System.out.println(baseDatosFactura.get(i).toString());			
+					System.out.println(baseDatosFactura.get(i).toString());
+				
+				intF.escrituraFichero(Principal.RUTA_ARCHIVO_LOG, LocalDateTime.now() +" [INFO] - Lista de repostaje factura visualizada");
 			}
 			else 
-				System.out.println("\n[INFO] No hay datos de repostajes que mostrar");
+				System.out.println("\n[INFO] No hay datos de repostajes con factura que mostrar");
 		}
 		else {
 			if(baseDatosNormal.size()>0) {
 				for(int i=0;i<baseDatosNormal.size();i++) 
-					System.out.println(baseDatosNormal.get(i).toString());			
+					System.out.println(baseDatosNormal.get(i).toString());
+				
+				intF.escrituraFichero(Principal.RUTA_ARCHIVO_LOG, LocalDateTime.now() +" [INFO] - Lista de repostaje normal visualizada");
 			}
 			else 
-				System.out.println("\n[INFO] No hay datos de repostaje que mostrar");
+				System.out.println("\n[INFO] No hay datos de repostaje normal que mostrar");
 		}
 	}
 
@@ -147,95 +157,65 @@ public class ImplRepostaje implements InterfazRepostaje{
 		int posicionRepostaje=0;
 	
 		if(esRepostajeConFactura()){	
+			if(baseDatosFactura.isEmpty())
+				System.out.println("\n[INFO] No hay repostajes con factura registrados para eliminar");
+			else {  //Si el usuario quiere eliminar repostaje con factura y al menos hay un repostaje registrado entra en este else para pedir la modificación	
+				posicionRepostaje=encuentraPosicionRepostaje(baseDatosFactura);
+	
+				if(posicionRepostaje != -1) { //Si no es -1 es que existe el repostaje (factura) que el usuario quiere eliminar
+					baseDatosFactura.remove(posicionRepostaje);
+					System.out.println("\n[INFO] Repostaje eliminado correctamente");
+					intF.escrituraFichero(Principal.RUTA_ARCHIVO_LOG, LocalDateTime.now() +" [INFO] - Repostaje factura eliminado de la base de datos");
+				}
+				else
+					System.out.println("\n[INFO] El repostaje no se encuentra en la base de datos");
+			}	
+		} 
+		else { //Entra en este bloque solo si el usuario eligió eliminar respotaje normal
+			if(baseDatosNormal.isEmpty())
+				System.out.println("\n[INFO] No hay repostajes normal registrados para eliminar");
+			else {
+				posicionRepostaje=encuentraPosicionRepostaje(baseDatosNormal);
+				
+				if(posicionRepostaje != -1) { //Si no es -1 es que existe el repostaje (normal) que el usuario quiere eliminar
+					baseDatosNormal.remove(posicionRepostaje);
+					System.out.println("\n[INFO] Repostaje eliminado correctamente");
+					intF.escrituraFichero(Principal.RUTA_ARCHIVO_LOG, LocalDateTime.now() +" [INFO] - Repostaje normal eliminado de la base de datos");
+				}
+				else
+					System.out.println("\n[INFO] El repostaje no se encuentra registrado en la base de datos");		
 			
-			posicionRepostaje=encuentraPosicionRepostaje(baseDatosFactura);
-
-			if(posicionRepostaje != -1) {
-				System.out.println("\n[INFO] Repostaje eliminado correctamente");
-				baseDatosFactura.remove(posicionRepostaje);
-			}
-			else
-				System.out.println("\n[INFO] El repostaje no se encuentra en la base de datos");
-			
-		}
-		else {
-			
-			posicionRepostaje=encuentraPosicionRepostaje(baseDatosNormal);
-			
-			if(posicionRepostaje != -1) {
-				System.out.println("\n[INFO] Repostaje eliminado correctamente ---");
-				baseDatosNormal.remove(posicionRepostaje);
-			}
-			else
-				System.out.println("\n[INFO] El repostaje no se encuentra registrado en la base de datos");		
+			}	
 		}					
 	}
 
-
 	@Override
 	public void modificarRepostaje(List<Repostaje> baseDatosNormal,List<Repostaje> baseDatosFactura) {
-		int idmodificar, contadorPosicion=0;
-		boolean idExiste=false;
-		
 		
 		int posicionRepostaje=0;
 		
-		if(esRepostajeConFactura()){	
-			
-			posicionRepostaje=encuentraPosicionRepostaje(baseDatosFactura);
-
-			if(posicionRepostaje != -1) { //Si cumple la condición es que existe el repostaje (factura) que el usuario quiere modificar 
-				String campoAmodificar= JOptionPane.showInputDialog("Introduce campo a modificar (litros, importe, dni o matricula): ");
+		if(esRepostajeConFactura()){ 	
+			if(baseDatosFactura.isEmpty())
+				System.out.println("\n[INFO] No hay repostajes con factura registrados para modificar");		
+			else { //Si el usuario quiere modificar repostaje con factura y al menos hay un repostaje registrado entra en este else para pedir la modificación	
+				posicionRepostaje=encuentraPosicionRepostaje(baseDatosFactura);	
+				if(posicionRepostaje != -1) { //Si cumple la condición es que existe el repostaje (factura) que el usuario quiere modificar 
+					modificarCampo(baseDatosFactura,posicionRepostaje);				
+				} else 
+					System.out.println("\n[INFO] El repostaje no se encuentra en la base de datos");			
+			}			
+		} 
+		else { //Entra aquí solo si el usuario eligió modificar respotaje normal		
+			if(baseDatosNormal.isEmpty())
+				System.out.println("\n[INFO] No hay repostajes normal registrados para modificar");			
+			else {	//Si al menos hay un repostaje normal registrado entra en este bloque para pedir la modificación		
+				posicionRepostaje=encuentraPosicionRepostaje(baseDatosNormal);
 				
-				if(campoAmodificar.equalsIgnoreCase("litros")) {
-					double litros = Double.parseDouble(JOptionPane.showInputDialog("Introduce nueva cantidad de litros: "));
-					baseDatosFactura.get(posicionRepostaje).setLitrosRepostados(litros);
-					System.out.println("\n[INFO] Campo modificado correctamente");
-				}
-				else if(campoAmodificar.equalsIgnoreCase("importe")) {
-					double importe = Double.parseDouble(JOptionPane.showInputDialog("Introduce nuevo importe: "));
-					baseDatosFactura.get(posicionRepostaje).setImporteTotal(importe);	
-				}
-				else if(campoAmodificar.equalsIgnoreCase("dni")) {
-					String dniNuevo = JOptionPane.showInputDialog("Introduce nuevo dni:");
-					baseDatosFactura.get(posicionRepostaje).setDniCliente(dniNuevo);
-				}
-				else if(campoAmodificar.equalsIgnoreCase("matricula")) {
-					String matriculaNueva = JOptionPane.showInputDialog("Introduce nueva matricula:");
-					baseDatosFactura.get(posicionRepostaje).setMatriculaVehiculoCliente(matriculaNueva);
-				}
-			}
-			else
-				System.out.println("\n[INFO] El repostaje no se encuentra en la base de datos");
-			
-		}
-		else {
-			
-			posicionRepostaje=encuentraPosicionRepostaje(baseDatosNormal);
-			
-			if(posicionRepostaje != -1) { //Si cumple la condición es que existe el repostaje (normal) que el usuario quiere modificar
-				String campoAmodificar= JOptionPane.showInputDialog("Introduce campo a modificar (litros, importe, dni o matricula): ");
-				
-				if(campoAmodificar.equalsIgnoreCase("litros")) {
-					double litros = Double.parseDouble(JOptionPane.showInputDialog("Introduce nueva cantidad de litros: "));
-					baseDatosNormal.get(posicionRepostaje).setLitrosRepostados(litros);
-					System.out.println("\n[INFO] Campo modificado correctamente");
-				}
-				else if(campoAmodificar.equalsIgnoreCase("importe")) {
-					double importe = Double.parseDouble(JOptionPane.showInputDialog("Introduce nuevo importe: "));
-					baseDatosNormal.get(posicionRepostaje).setImporteTotal(importe);	
-				}
-				else if(campoAmodificar.equalsIgnoreCase("dni")) {
-					String dniNuevo = JOptionPane.showInputDialog("Introduce nuevo dni:");
-					baseDatosNormal.get(posicionRepostaje).setDniCliente(dniNuevo);
-				}
-				else if(campoAmodificar.equalsIgnoreCase("matricula")) {
-					String matriculaNueva = JOptionPane.showInputDialog("Introduce nueva matricula:");
-					baseDatosNormal.get(posicionRepostaje).setMatriculaVehiculoCliente(matriculaNueva);
-				}
-			}
-			else
-				System.out.println("\n[INFO] El repostaje no se encuentra registrado en la base de datos");		
+				if(posicionRepostaje != -1) { //Si no es -1 es que existe el repostaje (normal) que el usuario quiere modificar
+					modificarCampo(baseDatosNormal,posicionRepostaje);	
+				} else 
+					System.out.println("\n[INFO] El repostaje no se encuentra registrado en la base de datos");							
+			}	
 		}					
 	}
 	
@@ -265,20 +245,26 @@ public class ImplRepostaje implements InterfazRepostaje{
 	 * @return tipoGasolina: un entero que hace referencia al tipo de gasolina elegida
 	 */
 	private int elegirTipoGasolina() {
-
-		
-		Scanner scan = new Scanner(System.in);
+	
+		Scanner scan = new Scanner(System.in); 
 		int tipoGasolina;
-		do {
-			System.out.println("\nQue tipo de gasolina desea repostar?");
-			System.out.println("\n1. sin plomo 95");
-			System.out.println("2. sin plomo 98");
-			System.out.println("3. Diesel");
-			tipoGasolina=scan.nextInt();
+		try {
 			
-			if(tipoGasolina<1||tipoGasolina>3)
-				System.err.println("\n**[ERROR] no se reconoce la gasolina seleccionada **");
-		}while(tipoGasolina<1||tipoGasolina>3);
+			do {
+				System.out.println("\nQue tipo de gasolina desea repostar?");
+				System.out.println("\n1. sin plomo 95");
+				System.out.println("2. sin plomo 98");
+				System.out.println("3. Diesel");
+				tipoGasolina=scan.nextInt();
+				
+				if(tipoGasolina<1||tipoGasolina>3) {
+					System.err.println("\n**[ERROR] no se reconoce la gasolina seleccionada **");
+				}
+			}while(tipoGasolina<1||tipoGasolina>3);
+			
+		} catch(InputMismatchException e) {
+			throw new InputMismatchException("Valor no válido");
+		}      
 		
 		return tipoGasolina;	
 	}
@@ -288,45 +274,113 @@ public class ImplRepostaje implements InterfazRepostaje{
 	 * @return true si es un repostaje con factura o false si no lo es
 	 */
 	private boolean esRepostajeConFactura(){
+		
 		String elegirRepostaje;
 
-		elegirRepostaje=JOptionPane.showInputDialog("Selecciona tipo de respotaje, normal o con factura (n/f): ");
-		
-		if(elegirRepostaje.equalsIgnoreCase("n")) 
-			return false;
-		else if(elegirRepostaje.equalsIgnoreCase("f")) 
-			return true;
-		else
-			System.err.println("\nNo ha introducido repostaje con factura o normal (f/n)");
-		
+		try {
+			
+			elegirRepostaje=JOptionPane.showInputDialog("Selecciona tipo de respotaje, normal o con factura (n/f): ");
+			
+			if(elegirRepostaje.equalsIgnoreCase("n")) 
+				return false;
+			else if(elegirRepostaje.equalsIgnoreCase("f")) 
+				return true;
+			else
+				System.err.println("\n[ERROR] No ha introducido repostaje con factura o normal (f/n)");
+			
+			
+		}catch(HeadlessException he) {
+			System.err.println("\n**[ERROR] Por favor, intente ejecutar esta aplicación en un entorno con una interfaz gráfica de usuario **");
+			intF.escrituraFichero(Principal.RUTA_ARCHIVO_LOG, LocalDateTime.now()+ "[ERROR HeadlessException] - Debido a que se ejecuta la aplicación en entorno sin gráficos");
+		}
 		return false;
 		
 	}
 	
 	/**
-	 * La finalidad de este método es encontrar la posición del repostaje en la lista en cuestión. El id del repostaje lo introduce el usuario.
+	 * La finalidad de este método es encontrar la posición del repostaje en la lista en cuestión en base al id del repostaje, este lo introduce el usuario.
 	 * @param baseDatos
 	 * @return si existe el id repostaje devuelve la posición en la lista, si no devuelve -1
 	 */
 	private int encuentraPosicionRepostaje(List<Repostaje>baseDatos) {
+		
 		int idAencontrar, contPosicion=0;
 		boolean idExiste = false;
 		
-		idAencontrar=Integer.parseInt(JOptionPane.showInputDialog("Introduce el id del repostaje: "));
-		for(Repostaje registro:baseDatos) {
-			int idBaseDato = registro.getIdentidicador();
-			if(idBaseDato==idAencontrar) {
-				idExiste=true;
-				break;
+		try {
+			idAencontrar=Integer.parseInt(JOptionPane.showInputDialog("Introduce el id del repostaje: "));
+			for(Repostaje registro:baseDatos) {
+				int idBaseDato = registro.getIdentidicador();
+				if(idBaseDato==idAencontrar) {
+					idExiste=true;
+					break;
+				}
+				contPosicion++;
 			}
-			contPosicion++;
-		}
-		if(idExiste)
-			return contPosicion;
-		else
-			return -1;
+			if(idExiste)
+				return contPosicion;
+			else
+				return -1;
+		} catch(NumberFormatException nfe) {
+			System.err.println("\n**[ERROR] Entrada inválida: por favor ingrese un número entero **");
+			intF.escrituraFichero(Principal.RUTA_ARCHIVO_LOG, LocalDateTime.now()+ " [ERROR NumberFormatException] - El usuario introdujo entrada inválida por scanner, no se pudo ejecutar el método parseInt()");
+		} catch(HeadlessException he) {
+			System.err.println("\n**[ERROR] Por favor, intente ejecutar esta aplicación en un entorno con una interfaz gráfica de usuario **");
+			intF.escrituraFichero(Principal.RUTA_ARCHIVO_LOG, LocalDateTime.now()+ "[ERROR HeadlessException] - Debido a que se ejecuta la aplicación en entorno sin gráficos");
+		} 
+		return -1;
 	}
 
+	/**
+	 * Permite modificar el campo (atributo) de la instancia ya registrada anteriormente pidiendo al usuario el campo a modificar y el nuevo valor por consola.
+	 * @param baseDatos
+	 * @param posicionRepostaje (en la baseDatos)
+	 */
+	private void modificarCampo(List<Repostaje>baseDatos, int posicionRepostaje) {
+		
+		boolean seHaModificado=false;
+	    try {
+	        String campoAModificar = JOptionPane.showInputDialog("Introduce campo a modificar (litros, importe, dni o matricula");
+	        switch (campoAModificar.toLowerCase()) {
+	            case "litros":
+	                double litros = Double.parseDouble(JOptionPane.showInputDialog("Introduce nueva cantidad de litros: "));
+	                baseDatos.get(posicionRepostaje).setLitrosRepostados(litros);
+					System.out.println("\n[INFO] Campo modificado correctamente");
+					seHaModificado=true;
+	                break;
+	            case "importe":
+	                double importe = Double.parseDouble(JOptionPane.showInputDialog("Introduce nuevo importe: "));
+	                baseDatos.get(posicionRepostaje).setImporteTotal(importe);
+					System.out.println("\n[INFO] Campo modificado correctamente");
+					seHaModificado=true;
+	                break;
+	            case "dni":
+	                String dni = JOptionPane.showInputDialog("Introduce nuevo dni:");
+	                baseDatos.get(posicionRepostaje).setDniCliente(dni);
+					System.out.println("\n[INFO] Campo modificado correctamente");
+					seHaModificado=true;
+	                break;
+	            case "matricula":
+	                String matricula = JOptionPane.showInputDialog("Introduce la nueva matricula:");
+	                baseDatos.get(posicionRepostaje).setMatriculaVehiculoCliente(matricula);
+					System.out.println("\n[INFO] Campo modificado correctamente");
+					seHaModificado=true;
+	                break;
+	            default:
+	            	System.err.println("Campo no válido");
+	        }
+	        
+	    } catch (NumberFormatException e) {
+			System.err.println("\n**[ERROR] Entrada inválida: por favor ingrese un número entero **");
+			intF.escrituraFichero(Principal.RUTA_ARCHIVO_LOG, LocalDateTime.now()+ " [ERROR NumberFormatException] - El usuario introdujo entrada inválida por scanner, no se pudo ejecutar el método parseInt()");
+
+	    } catch(NullPointerException npe) {
+			System.err.println("\n**[ERROR] ocurrió una excepción no esperada: " + npe.getMessage() + " **");
+			intF.escrituraFichero(Principal.RUTA_ARCHIVO_LOG, LocalDateTime.now() +" [ERROR NullPointerException] - El objeto al que se accede tiene un valor null "+ npe.getMessage());
+		}
+	    if(seHaModificado) 
+			intF.escrituraFichero(Principal.RUTA_ARCHIVO_LOG, LocalDateTime.now() +" [INFO] - Repostaje modificado de la base de datos");
+	}
 
 	
 }

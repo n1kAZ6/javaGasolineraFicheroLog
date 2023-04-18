@@ -11,17 +11,16 @@ import aplicacion.entidades.Repostaje;
 public interface InterfazRepostaje {
 
 	/**	  
-	 * Llama al método de la clase elegirTipoGasolina, muestra al usuario el precio actual del combustible
-	 * para preguntar por la cantidad a repostar e indicarle el costo final del repostaje dependiendo del tipo de combustible elegido.
-	 * 
+	 * Crea instancias de tipo Repostaje (normal) y es almacenada en su lista correspondiente. 
+	 * Los datos necesarios para el repostaje los introduce el usuario por consola.
 	 * @param baseDatosNormal La lista de objetos tipo Repostaje tipo normal
 	 * @return la lista de objeto tipo Repostaje normal actualizada
 	 */
 	void repostajeNormal(List<Repostaje>baseDatosNormal);
 	
 	/**	  
-	 * Llama al método de la clase elegirTipoGasolina, muestra al usuario el precio actual del combustible
-	 * para preguntar por DNI, matricula del vehículo y la cantidad a repostar para indicarle el costo final del repostaje
+	 * Crea instancias de tipo Repostaje (factura) y es almacenada en su lista correspondiente
+	 * Los datos de la factura y el repostaje es introducido por el usuario en consola.
 	 * segun el tipo de combustible elegido.
 	 * 
 	 * @param baseDatosFactura La lista de objetos tipo Repostaje tipo factura
@@ -37,8 +36,8 @@ public interface InterfazRepostaje {
 	void verRepostajes(List<Repostaje>baseDatosNormal,List<Repostaje>baseDatosFactura);
 	
 	/**
-	 * Permite al usuario elegir el tipo de repostaje (Factura/normal) para solicitar el id del repostaje que quiere eliminar,
-	 * si existe lo elimina de la lista y si no existe se muestra un aviso.
+	 * Elimina instancia de tipo Repostaje (Factura/normal) registradas con anterioridad por medio del id que introduce
+	 * el usuario por consola.
 	 * @param baseDatosNormal
 	 * @param baseDatosFactura
 	 * @return la lista de objeto tipo Repostaje normal/factura actualizada si se hubiera eliminado
@@ -46,8 +45,8 @@ public interface InterfazRepostaje {
 	void eliminarRepostaje (List<Repostaje>baseDatosNormal,List<Repostaje>baseDatosFactura);
 	
 	/**
-	 * Muestra al usuario los repostajes y pide el id del repostaje que quiere modificar, si no existe se muestra un aviso.
-	 * si existe le pide el campo a modificar de la BBDD (la lista) y el nuevo dato.
+	 * Permite al usuario modificar el valor de los atributos repostaje ya realizados con anterioridad.
+	 * Si existe le pide el campo a modificar y el nuevo valor.
 	 * @param baseDatosNormal
 	 * @param baseDatosFactura
 	 * @return la lista en cuestión con los repostaje actualizada si se hubiera modificado
