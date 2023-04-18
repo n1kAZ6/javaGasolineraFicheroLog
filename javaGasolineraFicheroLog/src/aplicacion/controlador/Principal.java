@@ -21,9 +21,6 @@ public class Principal {
 		List<Repostaje>baseDatosNormal = new ArrayList<>();
 		List<Repostaje>baseDatosFactura = new ArrayList<>();
 
-		Repostaje reposFactura = new Repostaje();
-		Repostaje reposNormal = new Repostaje();
-
 		InterfazMenu intM = new ImplMenu();
 		InterfazRepostaje intR =new ImplRepostaje();
 		
@@ -32,9 +29,9 @@ public class Principal {
 		int opcion;
 		do {
 			intM.mostrarMenu();
-			System.out.println("Introduza la opción deseada: ");
+			System.out.println("\nIntroduza la opción deseada: ");
 			opcion=scan.nextInt();
-			System.out.println("[INFO] - Has seleccionado la opcion " + opcion);
+			System.out.println("\n[INFO] - Has seleccionado la opcion " + opcion);
 
 			switch(opcion) {
 				case 1:
@@ -47,33 +44,21 @@ public class Principal {
 					intR.verRepostajes(baseDatosNormal, baseDatosFactura);
 					break;
 				case 4:
-					String eliminarRepostaje=JOptionPane.showInputDialog("Cual repostaje quiere eliminar normal o con factura (n/f): ");
-					if(eliminarRepostaje.equalsIgnoreCase("n")) 
-						intR.eliminarRepostajeNormal(baseDatosNormal);
-					else if(eliminarRepostaje.equalsIgnoreCase("f")) 
-						intR.eliminarRepostajeFactura(baseDatosFactura);
-					else
-						System.err.println("No ha introducido repostaje con factura o normal (f/n)");
+					intR.eliminarRepostaje(baseDatosNormal,baseDatosFactura);
 					break;
 				case 5:
-					String modificiarRepostaje=JOptionPane.showInputDialog("Cual repostaje quiere modificar normal o con factura (n/f): ");
-					if(modificiarRepostaje.equalsIgnoreCase("n")) 
-						intR.modificarRepostaje(baseDatosNormal);
-					else if(modificiarRepostaje.equalsIgnoreCase("f")) 
-						intR.modificarRepostaje(baseDatosFactura);
-					else
-						System.err.println("No ha introducido repostaje con factura o normal (f/n)");
+					intR.modificarRepostaje(baseDatosNormal, baseDatosFactura);
 					break;
 				case 6:
 					cerrarMenu=true;
 					break;
 				default:
-					System.err.println("**Error: opción elegida no disponible");
+					System.err.println("\n**[ERROR] opción elegida no disponible **");
 					break;
 			}
 					
 		}while(!cerrarMenu);
-		System.out.println("Desconectando, Gracias por su confianza en nuestra gasolinera!");
+		System.out.println("\nDesconectando, Gracias por su confianza en nuestra gasolinera!");
 	}
 
 }

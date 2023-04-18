@@ -74,8 +74,7 @@ public class Repostaje {
 	//Sobre escritura toString del objeto para que no muestra la referencia en memoria al imprimir por consola
 	@Override
 	public String toString() {
-		return "Repostaje [ id="+ identificador+", litrosRepostados=" + litrosRepostados + ", importeTotal=" + importeTotal + ", dniCliente="
-				+ dniCliente + ", matriculaVehiculoCliente=" + matriculaVehiculoCliente + ", fechaActual=" + fechaRepostaje
-				+ "]";
+		return "\n--- Datos del Repostaje ---\n\nid: "+ identificador+"\nLitros repostados: " + litrosRepostados + "\nImporte pagado: " + importeTotal + " €\nDNI del cliente: "
+				+ dniCliente + "\nMatricula del vehículo: " + matriculaVehiculoCliente + "\nFecha del repostaje: " + fechaRepostaje;
 	}
 }

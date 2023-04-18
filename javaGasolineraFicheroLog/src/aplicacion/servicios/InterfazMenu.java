@@ -12,4 +12,5 @@ public interface InterfazMenu {
 	 * Método encargado de mostrar al usuario por consola las opciónes disponibles
 	 */
 	void mostrarMenu();
+	
 }

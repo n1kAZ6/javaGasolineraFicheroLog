@@ -17,7 +17,7 @@ public interface InterfazRepostaje {
 	 * @param baseDatosNormal La lista de objetos tipo Repostaje tipo normal
 	 * @return la lista de objeto tipo Repostaje normal actualizada
 	 */
-	List<Repostaje> repostajeNormal(List<Repostaje>baseDatosNormal);
+	void repostajeNormal(List<Repostaje>baseDatosNormal);
 	
 	/**	  
 	 * Llama al método de la clase elegirTipoGasolina, muestra al usuario el precio actual del combustible
@@ -27,7 +27,7 @@ public interface InterfazRepostaje {
 	 * @param baseDatosFactura La lista de objetos tipo Repostaje tipo factura
 	 * @return la lista de objeto tipo Repostaje factura actualizada
 	 */
-	List<Repostaje> repostajeFactura(List<Repostaje>baseDatosFactura);
+	void repostajeFactura(List<Repostaje>baseDatosFactura);
 	
 	/**
 	 * Pregunta al usuario cual tipo de repostaje quiere listar (factura o normal) y actua en consecuencia.
@@ -37,26 +37,20 @@ public interface InterfazRepostaje {
 	void verRepostajes(List<Repostaje>baseDatosNormal,List<Repostaje>baseDatosFactura);
 	
 	/**
-	 * Muestra al usuario los repostajes y pide el id del repostaje que quiere eliminar,
-	 * si existe lo elimina de la BBDD (la lista) y si no existe se muestra un aviso.
+	 * Permite al usuario elegir el tipo de repostaje (Factura/normal) para solicitar el id del repostaje que quiere eliminar,
+	 * si existe lo elimina de la lista y si no existe se muestra un aviso.
 	 * @param baseDatosNormal
-	 * @return la lista de objeto tipo Repostaje normal actualizada si se hubiera eliminado
-	 */
-	List<Repostaje> eliminarRepostajeNormal (List<Repostaje>baseDatosNormal);
-	
-	/**
-	 * Muestra al usuario los repostajes y pide el id del repostaje que quiere eliminar,
-	 * si existe lo elimina de la BBDD (la lista) y si no existe se muestra un aviso.
 	 * @param baseDatosFactura
-	 * @return la lista de objeto tipo Repostaje factura actualizada si se hubiera eliminado
+	 * @return la lista de objeto tipo Repostaje normal/factura actualizada si se hubiera eliminado
 	 */
-	List<Repostaje> eliminarRepostajeFactura (List<Repostaje>baseDatosNormal);
+	void eliminarRepostaje (List<Repostaje>baseDatosNormal,List<Repostaje>baseDatosFactura);
 	
 	/**
 	 * Muestra al usuario los repostajes y pide el id del repostaje que quiere modificar, si no existe se muestra un aviso.
 	 * si existe le pide el campo a modificar de la BBDD (la lista) y el nuevo dato.
-	 * @param baseDatos
-	 * @return lista con los repostaje actualizada
+	 * @param baseDatosNormal
+	 * @param baseDatosFactura
+	 * @return la lista en cuestión con los repostaje actualizada si se hubiera modificado
 	 */
-	List<Repostaje>modificarRepostaje(List<Repostaje>baseDatos);
+	void modificarRepostaje(List<Repostaje>baseDatosNormal,List<Repostaje> baseDatosFactura);
 }
