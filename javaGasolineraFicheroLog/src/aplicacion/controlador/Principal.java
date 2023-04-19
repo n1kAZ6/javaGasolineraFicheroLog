@@ -16,8 +16,8 @@ import aplicacion.servicios.InterfazRepostaje;
 
 public class Principal {
 
-	
-	public static final String RUTA_ARCHIVO_LOG = "C:\\Users\\niko_\\Desktop\\log.txt"; // Nombre del archivo de registro
+	//Constante con ruta del archivo de LOG en que se escribirá. Para evitar error debe cambiar por su username y existir en su escritorio. 
+	public static final String RUTA_ARCHIVO_LOG = "C:\\Users\\nico\\Desktop\\log.txt"; 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 
@@ -43,12 +43,12 @@ public class Principal {
 	
 				switch(opcion) {
 					case 1:
+						intF.escrituraFichero(RUTA_ARCHIVO_LOG, LocalDateTime.now() +" [INFO] - Se accede al método repostajeNormal()");
 						intR.repostajeNormal(baseDatosNormal);
-						intF.escrituraFichero(RUTA_ARCHIVO_LOG, LocalDateTime.now() +" [INFO] - Repostaje normal guardado en la base de datos");
 						break;
 					case 2:
+						intF.escrituraFichero(RUTA_ARCHIVO_LOG, LocalDateTime.now() + " [INFO] - Se accede al método repostajeFactura()");
 						intR.repostajeFactura(baseDatosFactura);
-						intF.escrituraFichero(RUTA_ARCHIVO_LOG, LocalDateTime.now() + " [INFO] - Repostaje factura guardado en la base de datos");
 						break;
 					case 3:
 						intF.escrituraFichero(RUTA_ARCHIVO_LOG, LocalDateTime.now() +" [INFO] - Se accede al método verRepostaje()");
@@ -73,20 +73,17 @@ public class Principal {
 				}
 						
 			}while(!cerrarMenu);
-		}catch(InputMismatchException e) {
+		} catch(InputMismatchException e) {
 			System.err.println("\n**[ERROR] entrada inválida: por favor ingrese un número entero **");
 			intF.escrituraFichero(RUTA_ARCHIVO_LOG, LocalDateTime.now() +" [ERROR InputMismatchException] - El usuario introdujo entrada inválida por scanner ");
             scan.nextLine(); //limpiar el buffer de entrada para que si se produce la excepcion pueda continuar la aplicación
-		}
-		catch(NullPointerException npe) {
+		} catch(NullPointerException npe) {
 			System.err.println("\n**[ERROR] ocurrió una excepción no esperada: " + npe.getMessage() + " **");
 			intF.escrituraFichero(RUTA_ARCHIVO_LOG, LocalDateTime.now() +" [ERROR NullPointerException] - El objeto al que se accede tiene un valor null "+ npe.getMessage());
-		}
-		catch(Exception e) {
+		} catch(Exception e) {
 			System.err.println("\n**[ERROR] ocurrió una excepción no esperada: " + e.getMessage() + " **");
 			intF.escrituraFichero(RUTA_ARCHIVO_LOG, LocalDateTime.now() +" [ERROR Exception] - Se produjo una excepción no esperada "+ e.getMessage());
-
-		}
+		}	
 		System.out.println("\nDesconectando, Gracias por su confianza en nuestra gasolinera!");
 		intF.escrituraFichero(RUTA_ARCHIVO_LOG, LocalDateTime.now() +" [INFO] - Aplicación cerrada");
 	}

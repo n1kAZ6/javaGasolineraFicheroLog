@@ -20,7 +20,6 @@ import aplicacion.entidades.Repostaje;
  */
 public class ImplRepostaje implements InterfazRepostaje{
 
-	private LocalDate fechaRepostaje = LocalDate.now();
 	private double precioLitro95=1.65;
 	private double precioLitro98=1.85;
 	private double precioLitroDiesel=1.70;
@@ -59,16 +58,10 @@ public class ImplRepostaje implements InterfazRepostaje{
 		}
 		System.out.println("\nGracias, repostaje finalizado.");
 
-		Repostaje repostajeNormal = new Repostaje();
-		
-		//Se asigna a la instancia del objeto (con los setters) los datos (atributos) correspondientes del respotaje facilitados por el usuario
-		repostajeNormal.SetIdentidicador(generarId(baseDatosNormal));
-		repostajeNormal.setFechaActual(LocalDate.now());
-		repostajeNormal.setLitrosRepostados(litrosArepostar);
-		repostajeNormal.setImporteTotal(importe);
-		
-		//Guardamos en la BBDD el objeto respostajeNormal correspondiente con sus atributos especificos y la devuelve en el return
-		baseDatosNormal.add(repostajeNormal);
+		//Guardamos en la lista el objeto tipo respostaje (normal) con sus atributos
+		baseDatosNormal.add(new Repostaje(generarId(baseDatosNormal),LocalDate.now(),litrosArepostar,importe));
+		intF.escrituraFichero(Principal.RUTA_ARCHIVO_LOG, LocalDateTime.now() + " [INFO] - Instacia Repostaje normal guardado en la base de datos");
+
 	}
 
 	@Override
@@ -108,31 +101,20 @@ public class ImplRepostaje implements InterfazRepostaje{
 			importe=litrosArepostar*+precioLitroDiesel;
 			System.out.print("\nEl importe total de "+litrosArepostar+" litros de diesel es ");
 			System.out.printf("%1.2f €",importe);
-		}
-		
-		System.out.println("\nGracias, repostaje finalizado.");
-		Repostaje repostajeConFactura = new Repostaje();
-		
-		//Se asigna a la instancia del objeto (con los setters) los datos (atributos) correspondientes del respotaje facilitados por el usuario
-		repostajeConFactura.SetIdentidicador(generarId(baseDatosFactura));		
-		repostajeConFactura.setDniCliente(dniCliente);
-		repostajeConFactura.setImporteTotal(importe);
-		repostajeConFactura.setMatriculaVehiculoCliente(matricula);
-		repostajeConFactura.setLitrosRepostados(litrosArepostar);
-		repostajeConFactura.setFechaActual(fechaRepostaje);
-		
-		//Guardamos en la BBDD el objeto respostajeNormal correspondiente con sus atributos especificos y la devuelve en el return
-		baseDatosFactura.add(repostajeConFactura);
+		}	
+		System.out.println("\nGracias, repostaje finalizado.");	
+		//Guardamos en la lista el objeto respostaje (factura) correspondiente con sus atributos especificos
+		baseDatosFactura.add(new Repostaje(dniCliente, matricula,generarId(baseDatosFactura),LocalDate.now(),litrosArepostar,importe));
+		intF.escrituraFichero(Principal.RUTA_ARCHIVO_LOG, LocalDateTime.now() + " [INFO] - Instacia Repostaje factura guardado en la base de datos");
 	}
 
 	@Override
 	public void verRepostajes(List<Repostaje> baseDatosNormal, List<Repostaje> baseDatosFactura) {
 
-		if(esRepostajeConFactura()) {
-			if(baseDatosFactura.size()>0) {
-				
-				for(int i=0;i<baseDatosFactura.size();i++) 
-					System.out.println(baseDatosFactura.get(i).toString());
+		if(esRepostajeConFactura()) {		
+			if(!baseDatosFactura.isEmpty()) {		
+				for(Repostaje repostaje : baseDatosFactura) 
+					System.out.println(repostaje.toString());
 				
 				intF.escrituraFichero(Principal.RUTA_ARCHIVO_LOG, LocalDateTime.now() +" [INFO] - Lista de repostaje factura visualizada");
 			}
@@ -140,9 +122,9 @@ public class ImplRepostaje implements InterfazRepostaje{
 				System.out.println("\n[INFO] No hay datos de repostajes con factura que mostrar");
 		}
 		else {
-			if(baseDatosNormal.size()>0) {
-				for(int i=0;i<baseDatosNormal.size();i++) 
-					System.out.println(baseDatosNormal.get(i).toString());
+			if(!baseDatosNormal.isEmpty()) {
+				for(Repostaje repostaje : baseDatosNormal) 
+					System.out.println(repostaje.toString());
 				
 				intF.escrituraFichero(Principal.RUTA_ARCHIVO_LOG, LocalDateTime.now() +" [INFO] - Lista de repostaje normal visualizada");
 			}
@@ -298,7 +280,7 @@ public class ImplRepostaje implements InterfazRepostaje{
 	}
 	
 	/**
-	 * La finalidad de este método es encontrar la posición del repostaje en la lista en cuestión en base al id del repostaje, este lo introduce el usuario.
+	 * La finalidad de este método es encontrar la posición del objeto repostaje en la lista en base al id del repostaje, este lo introduce el usuario.
 	 * @param baseDatos
 	 * @return si existe el id repostaje devuelve la posición en la lista, si no devuelve -1
 	 */
@@ -381,6 +363,7 @@ public class ImplRepostaje implements InterfazRepostaje{
 	    if(seHaModificado) 
 			intF.escrituraFichero(Principal.RUTA_ARCHIVO_LOG, LocalDateTime.now() +" [INFO] - Repostaje modificado de la base de datos");
 	}
+	
 
 	
 }

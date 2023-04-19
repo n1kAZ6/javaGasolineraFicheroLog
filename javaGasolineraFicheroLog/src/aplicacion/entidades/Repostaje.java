@@ -15,21 +15,27 @@ public class Repostaje {
 	private double importeTotal;
 	private String dniCliente; 
 	private String matriculaVehiculoCliente;
-	private LocalDate fechaRepostaje =  LocalDate.now();
+	private LocalDate fechaRepostaje;
 	private int identificador;
 
-	//Constructores con paso de parametros y vacío
-	public Repostaje(double importeTotal, String dniCliente, String matriculaVehiculoCliente,double litrosRepostados, LocalDate fechaActual) {
-		super();
+	//Constructores con paso de parametros (para instancias factura/normal)y vacío
+	public Repostaje(String dniCliente, String matriculaVehiculoCliente,int identificador, LocalDate fechaRepostaje, double litrosRepostados, double importeTotal) {
+		this.identificador=identificador;
 		this.importeTotal = importeTotal;
 		this.dniCliente = dniCliente;
 		this.matriculaVehiculoCliente = matriculaVehiculoCliente;
-		this.fechaRepostaje = fechaActual;
+		this.fechaRepostaje = fechaRepostaje;
 		this.litrosRepostados = litrosRepostados;
+	}
+	public Repostaje (int identificador, LocalDate fechaRepostaje, double litrosRepostados, double importeTotal) {
+		this.identificador=identificador;
+		this.fechaRepostaje=fechaRepostaje;
+		this.litrosRepostados=litrosRepostados;
+		this.importeTotal=importeTotal;
 	}
 
 	public Repostaje() {
-		super();
+		
 	}
 	
 	//Getter and setter para mostrar/modificar los atributos encapsulados
