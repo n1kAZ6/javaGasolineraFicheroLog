@@ -11,20 +11,17 @@ import aplicacion.entidades.Repostaje;
 public interface InterfazRepostaje {
 
 	/**	  
-	 * Crea instancias de tipo Repostaje (normal) y es almacenada en su lista correspondiente. 
+	 * Crea instancias de tipo Repostaje (normal) y son almacenadas en su lista correspondiente. 
 	 * Los datos necesarios para el repostaje los introduce el usuario por consola.
 	 * @param baseDatosNormal La lista de objetos tipo Repostaje tipo normal
-	 * @return la lista de objeto tipo Repostaje normal actualizada
 	 */
 	void repostajeNormal(List<Repostaje>baseDatosNormal);
 	
 	/**	  
-	 * Crea instancias de tipo Repostaje (factura) y es almacenada en su lista correspondiente
+	 * Crea instancias de tipo Repostaje (factura) y son almacenadas en su lista correspondiente
 	 * Los datos de la factura y el repostaje es introducido por el usuario en consola.
 	 * segun el tipo de combustible elegido.
-	 * 
 	 * @param baseDatosFactura La lista de objetos tipo Repostaje tipo factura
-	 * @return la lista de objeto tipo Repostaje factura actualizada
 	 */
 	void repostajeFactura(List<Repostaje>baseDatosFactura);
 	
@@ -40,7 +37,6 @@ public interface InterfazRepostaje {
 	 * el usuario por consola.
 	 * @param baseDatosNormal
 	 * @param baseDatosFactura
-	 * @return la lista de objeto tipo Repostaje normal/factura actualizada si se hubiera eliminado
 	 */
 	void eliminarRepostaje (List<Repostaje>baseDatosNormal,List<Repostaje>baseDatosFactura);
 	
@@ -49,7 +45,6 @@ public interface InterfazRepostaje {
 	 * Si existe le pide el campo a modificar y el nuevo valor.
 	 * @param baseDatosNormal
 	 * @param baseDatosFactura
-	 * @return la lista en cuestión con los repostaje actualizada si se hubiera modificado
 	 */
 	void modificarRepostaje(List<Repostaje>baseDatosNormal,List<Repostaje> baseDatosFactura);
 }
